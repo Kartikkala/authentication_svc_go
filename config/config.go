@@ -61,7 +61,7 @@ func NewConfig() *Config {
 			Timezone: getEnvOrDefault("POSTGRES_TIMEZONE", "Asia/Kolkata"),
 		},
 		App: ApplicationConfig{
-			RESTPort:    8080,
+			RESTPort:    8082,
 			HostAddress: getEnvOrDefault("HOST_ADDRESS", "127.0.0.1"),
 		},
 		SMTP: EmailConfig{
