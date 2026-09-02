@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	"github.com/nats-io/nats.go"
@@ -13,7 +14,6 @@ func NewAuthenticationSvcHooks(NATS *nats.Conn) *AuthenticationSvcHooks {
 	}
 }
 
-// Move to the drive service!
 // Notify drive service that
 // a new user came in with the
 // user ID
@@ -25,13 +25,18 @@ func (svc *AuthenticationSvcHooks) NotifyDriveService(
 	password string,
 ) error {
 	log.Println("new user registered! notifying drive service...")
-
-	// TODO: Complete this
-	// svc.NATS.Publish("auth.newuser")
-	
-	// _, err = svc.authorizationSvc.WriteRelationship(ctx, "node", node.ID.String(), "owner", "user", strconv.FormatUint(userid, 10))
-	// if err != nil {
-	// 	return err
-	// }
+	driveMsg := &DriveNewUserRegMsg{
+		UserID: userid,
+	}
+	msg, err := json.Marshal(driveMsg)
+	if err != nil {
+		log.Println("error marshaling drive req...")
+		return err
+	}
+	err = svc.NATS.Publish("authentication.user.registered", msg)
+	if err != nil {
+		log.Println("error publishing req to drive...")
+		return err
+	}
 	return nil
 }
